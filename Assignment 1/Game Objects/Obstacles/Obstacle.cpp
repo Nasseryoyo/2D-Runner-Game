@@ -2,14 +2,15 @@
 #include <GL/glut.h>
 
 extern int windowHeight;
+extern float speedUp;
 
 
 Obstacle::Obstacle(float startX, float startY, bool reverseDirection) {
 
 	x = startX;
 	y = startY;
-	width = 20.0f;
-	height = 40.0f;
+	width = 60.0f;
+	height = 80.0f;
 	speed = 100.0f;
 	this->reverseDirection = reverseDirection;
 
@@ -17,7 +18,7 @@ Obstacle::Obstacle(float startX, float startY, bool reverseDirection) {
 
 void Obstacle::update(float deltaTime) {
 	// Move the obstacle from right to left
-	x -= speed * deltaTime;
+	x -= speed * deltaTime + deltaTime * speedUp;
 
 }
 

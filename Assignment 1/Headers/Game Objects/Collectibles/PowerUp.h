@@ -18,6 +18,7 @@ public:
 	void setWidth(float width);
 	void setHeight(float height);
 	void setCollected(bool flag);
+	bool isCollected();
 private:
 	float x;
 	float y;

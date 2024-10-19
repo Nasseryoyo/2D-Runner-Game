@@ -146,6 +146,8 @@
     <ClCompile Include="Game Objects\Enviroment\Stone.cpp" />
     <ClCompile Include="Game Objects\Obstacles\Obstacle.cpp" />
     <ClCompile Include="Game Objects\Collectables\PowerUp.cpp" />
+    <ClCompile Include="Game Stages\GameEndState.cpp" />
+    <ClCompile Include="Game Stages\GameLoseState.cpp" />
     <ClCompile Include="Level\CollectibleManager.cpp" />
     <ClCompile Include="Level\LevelGen.cpp" />
     <ClCompile Include="Level\ObstacleManager.cpp" />
@@ -166,6 +168,8 @@
     <ClInclude Include="Headers\Game Objects\Enviroment\Ground.h" />
     <ClInclude Include="Headers\Game Objects\Enviroment\Enviroment.h" />
     <ClInclude Include="Headers\Game Objects\Enviroment\Cloud.h" />
+    <ClInclude Include="Headers\Game Stages\GameEndState.h" />
+    <ClInclude Include="Headers\Game Stages\GameLoseState.h" />
     <ClInclude Include="Headers\Level\CollectibleManager.h" />
     <ClInclude Include="Headers\Level\PowerUpManager.h" />
     <ClInclude Include="Headers\Utils\Button.h" />

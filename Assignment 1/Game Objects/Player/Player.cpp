@@ -1,17 +1,20 @@
 #include "Game Objects/Player.h"
 #include <cmath>
+#include <SoundManager.h>
 #include <GL/glut.h>
 
+extern SoundManager soundManager;
 
 extern int windowHeight;
 extern int windowWidth;
+extern float speedUp;
 
-const float gravity = 150.0f; // Gravity constant to affect jump velocity
-const float jumpVelocity = 200.0f; // Initial jump velocity
+const float gravity = 300.0f; // Gravity constant to affect jump velocity
+const float jumpVelocity = 350.0f; // Initial jump velocity
 
 const float duckDuration = 2.0f; // Duration to stay ducked in seconds
-const float invincibilityDuration = 10.0f; // Duration of invisibility in seconds
-const float boostDuration = 100.0f; // Duration of jump boost in seconds
+const float invincibilityDuration = 5.0f; // Duration of invisibility in seconds
+const float boostDuration = 5.0f; // Duration of jump boost in seconds
 
 
 extern float groundLevel; // Ground level for the player
@@ -20,8 +23,8 @@ float maxJumpHeight; // Maximum height the player can jump
 Player::Player() {
 	x = 0;
 	y = 0;
-	width = 10;
-	height = 20;
+	width = 30;
+	height = 60;
 	dy = 0;
 	duckTime = 0.0f; // Initialize duck time
 	isJumping = false;
@@ -32,6 +35,19 @@ Player::Player() {
 	boostTimer = boostDuration;
 	health = 5; // Initialize player health
 	score = 0; // Initialize player score
+}
+
+void Player::init(float startX, float startY) {
+	// Initialize any player-specific properties if needed
+	x = startX;
+	y = startY;
+	maxJumpHeight = groundLevel + groundLevel * 0.80f;
+}
+
+void Player::setBoost(bool flag) {
+	isBoost = flag;
+	boostTimer = boostDuration; // Reset boost timer
+	maxJumpHeight = groundLevel + groundLevel * 1.1f; // Increase jump height
 }
 
 void Player::takeDamage() {
@@ -59,28 +75,20 @@ void Player::setInvisible(bool flag) {
 	invincibilityTimer = invincibilityDuration; // Reset invincibility timer
 }
 
-void Player::setBoost(bool flag) {
-	isBoost = flag;
-	boostTimer = boostDuration; // Reset boost timer
-	maxJumpHeight = groundLevel + groundLevel * 0.90f; // Increase jump height
-}
+
 
 bool Player::getInvisible() {
 	return isInvisible;
 }
 
-void Player::init(float startX, float startY) {
-	// Initialize any player-specific properties if needed
-	x = startX;
-	y = startY;
-	maxJumpHeight = groundLevel + groundLevel * 0.65;
-}
+
 
 void Player::jump() {
 	// Handle jump logic
 	if (!isJumping && y == groundLevel) {
 		dy = jumpVelocity;
 		isJumping = true;
+		soundManager.playSound("jump");
 	}
 }
 
@@ -135,7 +143,7 @@ void Player::update(float deltaTime) {
 		boostTimer -= deltaTime;
 		if (boostTimer <= 0.0f) {
 			isBoost = false;
-			maxJumpHeight = groundLevel + groundLevel * 0.65f; // Reset jump height
+			maxJumpHeight = groundLevel + groundLevel * 0.80f; // Reset jump height
 		}
 	}
 }
@@ -143,6 +151,7 @@ void Player::update(float deltaTime) {
 void Player::handleKeyPress(unsigned char key, int x, int y) {
 	if (key == GLUT_KEY_UP) {
 		jump();
+
 	}
 
 	if (key == GLUT_KEY_DOWN) {
@@ -152,11 +161,49 @@ void Player::handleKeyPress(unsigned char key, int x, int y) {
 
 void Player::render() {
 	glColor3f(0.0f, 0.0f, 1.0f); // Set color to blue
+	// Draw a quad for the body
 	glBegin(GL_QUADS);
-	glVertex2f(x, y);
-	glVertex2f(x + width, y);
+	glVertex2f(x, y + height * 0.4f);
+	glVertex2f(x + width, y + height * 0.4f);
 	glVertex2f(x + width, y + height);
 	glVertex2f(x, y + height);
+	glEnd();
+
+	// Draw a circle for the head
+	float radius = width * 0.3f;
+	float centerX = x + width * 0.5f;
+	float centerY = y + height + radius;
+	int numSegments = 100;
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex2f(centerX, centerY);
+	for (int i = 0; i <= numSegments; i++) {
+		float angle = 2.0f * 3.1416 * i / numSegments;
+		float dx = radius * cosf(angle);
+		float dy = radius * sinf(angle);
+		glVertex2f(centerX + dx, centerY + dy);
+	}
+	glEnd();
+
+	// Draw lines for the arms
+	glLineWidth(10.0f);
+	glBegin(GL_LINES);
+	glVertex2f(x, y + height);
+	glVertex2f(x, y + height * 0.6f);
+	glVertex2f(x + width, y + height);
+	glVertex2f(x + width, y + height * 0.6f);
+	glEnd();
+	glLineWidth(1.0f);
+
+	// Draw a quad strip for the legs
+	glBegin(GL_QUAD_STRIP);
+	glVertex2f(x + width * 0.2f, y + height * 0.4f);
+	glVertex2f(x + width * 0.2f, y);
+	glVertex2f(x + width * 0.4f, y + height * 0.4f);
+	glVertex2f(x + width * 0.4f, y);
+	glVertex2f(x + width * 0.6f, y + height * 0.4f);
+	glVertex2f(x + width * 0.6f, y);
+	glVertex2f(x + width * 0.8f, y + height * 0.4f);
+	glVertex2f(x + width * 0.8f, y);
 	glEnd();
 }
 
@@ -172,31 +219,3 @@ bool Player::checkCollision(float objX, float objY, float objWidth, float objHei
 	return collided;
 }
 
-void Player::handleCollisionWithObstacle(Obstacle obstacle) {
-	if (!isInvisible && checkCollision(obstacle.getX(), obstacle.getY(), obstacle.getWidth(), obstacle.getHeight())) {
-		printf("player collided with obstacle");
-		takeDamage();
-	}
-}
-
-void Player::handleCollisionWithPowerUp(PowerUp powerUp) {
-	if (checkCollision(powerUp.getX(), powerUp.getY(), powerUp.getWidth(), powerUp.getHeight())) {
-		printf("player collided with powerup");
-		if (powerUp.getPowerUpType() == 1) { // Assuming 1 is for invisibility
-			setInvisible(true);
-		}
-		else if (powerUp.getPowerUpType() == 2) { // Assuming 2 is for jump boost
-			setBoost(true);
-		}
-		powerUp.setCollected(true);
-	}
-}
-
-void Player::handleCollisionWithCollectible(Coin coin) {
-	printf("checkin player collided with coin");
-	if (checkCollision(coin.getX(), coin.getY(), coin.getWidth(), coin.getHeight())) {
-		printf("player collided with coin");
-		coin.setCollected(true);
-		addScore(100);
-	}
-}

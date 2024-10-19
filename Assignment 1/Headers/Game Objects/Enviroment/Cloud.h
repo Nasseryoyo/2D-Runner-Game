@@ -5,6 +5,8 @@ public:
 	Cloud();
 	Cloud(float x, float y);
 	~Cloud();
+	float getX();
+	float getWidth();
 
 	void update(float deltaTime);
 	void render();

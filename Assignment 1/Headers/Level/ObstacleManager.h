@@ -8,7 +8,7 @@ public:
 	void update(float deltaTime);
 	void render();
 	void addObstacle(float startX, float startY, bool reverseDirection);
-	const std::vector<Obstacle>& getObstacles() const;
+	std::vector<Obstacle>& getObstacles();
 
 private:
 	std::vector<Obstacle> obstacles;

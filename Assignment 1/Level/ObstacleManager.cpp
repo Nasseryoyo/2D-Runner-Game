@@ -18,6 +18,6 @@ void ObstacleManager::addObstacle(float startX, float startY, bool reverseDirect
 	obstacles.emplace_back(startX, startY, reverseDirection);
 }
 
-const std::vector<Obstacle>& ObstacleManager::getObstacles() const {
+std::vector<Obstacle>& ObstacleManager::getObstacles() {
 	return obstacles;
 }

@@ -6,6 +6,14 @@ void PowerUpManager::update(float deltaTime) {
 	for (auto& powerUp : powerUps) {
 		powerUp.update(deltaTime);
 	}
+
+	// Remove collected coins
+	powerUps.erase(
+		std::remove_if(powerUps.begin(), powerUps.end(), [](PowerUp& power) {
+			return power.isCollected();
+			}),
+		powerUps.end()
+	);
 }
 
 void PowerUpManager::render() {
@@ -19,6 +27,6 @@ void PowerUpManager::addPowerUp(float startX, float startY) {
 	powerUps.emplace_back(startX, startY);
 }
 
-const std::vector<PowerUp>& PowerUpManager::getPowerUps() const {
+std::vector<PowerUp>& PowerUpManager::getPowerUps() {
 	return powerUps;
 }

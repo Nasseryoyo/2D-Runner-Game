@@ -16,6 +16,7 @@ public:
 	void generateLevel();
 	void update(float deltaTime);
 	void render();
+	void resetLevel();
 	ObstacleManager& getObstacleManager();
 	CollectibleManager& getCollectibleManager();
 	PowerUpManager& getPowerUpManager();
@@ -31,7 +32,6 @@ private:
 	float obstacleSpawnRate;
 	float collectibleSpawnRate;
 	float powerUpSpawnRate;
-	std::default_random_engine generator;
 };
 
 

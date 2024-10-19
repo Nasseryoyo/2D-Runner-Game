@@ -1,21 +1,19 @@
 #include "Game Objects/Enviroment/Ground.h"
-#include <cstdlib> // For rand()
-#include <ctime>   // For time()
+#include <random> // For random number generation
 
 #include <GL/glut.h>
 
 extern int windowWidth;
 extern int windowHeight;
+extern std::default_random_engine generator;
 
 Ground::Ground() {
 	// Seed the random number generator
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-	// Initialize 2 to 4 stones with random positions
-	int numStones = 2 + std::rand() % 3; // Random number between 2 and 4
-	for (int i = 0; i < numStones; ++i) {
-		float stoneX = static_cast<float>(std::rand() % windowWidth);
-		float stoneY = static_cast<float>(std::rand() % static_cast<int>(windowHeight * 0.25)) - windowHeight * 0.25;
-		stones.emplace_back(stoneX, stoneY);
+	std::uniform_real_distribution<float> dis(windowHeight * 0.05f, windowHeight * 0.1f);
+
+	// Generate stones
+	for (int i = 0; i < 5; i++) {
+		stones.emplace_back(windowWidth + windowWidth * (0.9f - i * 0.4f), dis(generator));
 	}
 }
 
@@ -51,4 +49,13 @@ void Ground::draw() {
 	glVertex2f(windowWidth, groundHeight); // Adjusted to be within the 25% height
 	glVertex2f(0, groundHeight); // Adjusted to be within the 25% height
 	glEnd();
+	// Draw grass blades as triangles
+	glColor3f(0.0f, 0.6f, 0.0f); // Darker green for grass blades
+	for (int i = 0; i < windowWidth; i += 20) {
+		glBegin(GL_TRIANGLES);
+		glVertex2f(i, groundHeight - 10);
+		glVertex2f(i + 10, groundHeight - 30);
+		glVertex2f(i + 20, groundHeight - 10);
+		glEnd();
+	}
 }

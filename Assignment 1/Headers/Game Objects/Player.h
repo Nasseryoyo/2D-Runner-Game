@@ -20,9 +20,6 @@ public:
 	void setInvisible(bool flag);
 	void setBoost(bool flag);
 	bool getInvisible();
-	void handleCollisionWithObstacle(Obstacle obstacle);
-	void handleCollisionWithPowerUp(PowerUp powerUp);
-	void handleCollisionWithCollectible(Coin coin);
 
 private:
 	float x, y;              // Position of the player

@@ -8,7 +8,6 @@ class Enviroment
 public:
 	Enviroment();
 	~Enviroment();
-
 	void update(float deltaTime);
 	void render();
 private:

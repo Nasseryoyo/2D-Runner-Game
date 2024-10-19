@@ -1,20 +1,31 @@
 #include <Game Stages/StateManager.h>
 #include <Game Stages/MenuState.h>
 #include <Game Stages/PlayState.h>
+#include <Game Stages/GameEndState.h>
+#include <Game Stages/GameLoseState.h>
+#include <random>  // For random number generation
 #include <ctime>  // For time measurement
+#include <SoundManager.h>
 #include <GL/glut.h>
 
 int windowWidth = 1280;  // Window width
 int windowHeight = 720;  // Window height
 float groundLevel = windowHeight * 0.25;  // Ground level for the player	
 
+float speedUp = 0.0f;  // Speed up factor for the game
+
 float lastTime = 0.0f;   // For keeping track of time between frames
+std::default_random_engine generator(std::random_device{}());  // Random number generator
 
 // State manager
 StateManager gStateMachine({
 	{"menu", []() -> State* { return new MenuState(); }},
-	{"play", []() -> State* { return new PlayState(); }}
+	{"play", []() -> State* { return new PlayState(); }},
+	{"gameover", []() -> State* { return new GameEndState(); }},
+	{"gameoverlose", []() -> State* { return new GameLoseState(); }}
 	});
+
+SoundManager soundManager;  // Sound manager
 
 void Display() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -80,9 +91,22 @@ void initWindow(int argc, char** argv) {
 	glutCreateWindow("Runner Game");
 }
 
+void initSounds() {
+
+	soundManager.addSound("jump", "Sounds/Effects/jump.wav");
+	soundManager.addSound("collect", "Sounds/Effects/collect.wav");
+	soundManager.addSound("hit", "Sounds/Effects/hurt.wav");
+	soundManager.addSound("powerUp", "Sounds/Effects/powerup.wav");
+
+	soundManager.addSound("play", "Sounds/BackGround/music.wav");
+	soundManager.addSound("gameWin", "Sounds/BackGround/gameWin.wav");
+	soundManager.addSound("gameLose", "Sounds/BackGround/gameLoss.wav");
+}
+
 int main(int argc, char** argr) {
 
 	initWindow(argc, argr);
+	initSounds();
 
 	// Set up the display function
 	glutDisplayFunc(Display);
@@ -111,6 +135,8 @@ int main(int argc, char** argr) {
 
 	// Initialize the state manager with the initial state (e.g., MenuState)
 	gStateMachine.change("menu", {});
+
+
 
 	// Start the main loop
 	glutMainLoop();

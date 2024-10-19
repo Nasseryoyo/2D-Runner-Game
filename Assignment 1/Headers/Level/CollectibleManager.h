@@ -7,7 +7,7 @@ public:
 	void update(float deltaTime);
 	void render();
 	void addCollectible(float startX, float startY);
-	const std::vector<Coin>& getCollectibles() const;
+	std::vector<Coin>& getCollectibles();
 private:
 	std::vector<Coin> collectibles;
 

@@ -8,7 +8,7 @@ public:
 	void update(float deltaTime);
 	void render();
 	void addPowerUp(float startX, float startY);
-	const std::vector<PowerUp>& getPowerUps() const;
+	std::vector<PowerUp>& getPowerUps();
 private:
 	std::vector<PowerUp> powerUps;
 
