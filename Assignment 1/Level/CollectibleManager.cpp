@@ -29,3 +29,7 @@ void CollectibleManager::addCollectible(float startX, float startY) {
 std::vector<Coin>& CollectibleManager::getCollectibles() {
 	return collectibles;
 }
+
+void CollectibleManager::clearCollectibles() {
+	collectibles.clear();
+}

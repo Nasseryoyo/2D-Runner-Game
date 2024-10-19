@@ -30,3 +30,7 @@ void PowerUpManager::addPowerUp(float startX, float startY) {
 std::vector<PowerUp>& PowerUpManager::getPowerUps() {
 	return powerUps;
 }
+
+void PowerUpManager::clearPowerUps() {
+	powerUps.clear();
+}

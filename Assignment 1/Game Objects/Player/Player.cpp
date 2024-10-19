@@ -1,6 +1,7 @@
 #include "Game Objects/Player.h"
 #include <cmath>
 #include <SoundManager.h>
+#include <sstream>
 #include <GL/glut.h>
 
 extern SoundManager soundManager;
@@ -13,9 +14,10 @@ const float gravity = 300.0f; // Gravity constant to affect jump velocity
 const float jumpVelocity = 350.0f; // Initial jump velocity
 
 const float duckDuration = 2.0f; // Duration to stay ducked in seconds
-const float invincibilityDuration = 5.0f; // Duration of invisibility in seconds
-const float boostDuration = 5.0f; // Duration of jump boost in seconds
 
+
+const float doublePointsDuration = 5.1f; // Duration of double points in seconds
+const float boostDuration = 5.1f; // Duration of jump boost in seconds
 
 extern float groundLevel; // Ground level for the player
 float maxJumpHeight; // Maximum height the player can jump
@@ -29,9 +31,9 @@ Player::Player() {
 	duckTime = 0.0f; // Initialize duck time
 	isJumping = false;
 	isDucking = false;
-	isInvisible = false;
+	isDoublePoints = false;
 	isBoost = false;
-	invincibilityTimer = invincibilityDuration;
+	doublePointsTimer = doublePointsDuration;
 	boostTimer = boostDuration;
 	health = 5; // Initialize player health
 	score = 0; // Initialize player score
@@ -50,6 +52,11 @@ void Player::setBoost(bool flag) {
 	maxJumpHeight = groundLevel + groundLevel * 1.1f; // Increase jump height
 }
 
+void Player::setDoublePoints(bool flag) {
+	isDoublePoints = flag;
+	doublePointsTimer = doublePointsDuration; // Reset double points timer
+}
+
 void Player::takeDamage() {
 	// Handle player taking damage
 	if (health > 0) {
@@ -59,6 +66,9 @@ void Player::takeDamage() {
 
 void Player::addScore(int points) {
 	// Handle adding points to the player's score
+	if (isDoublePoints) {
+		points *= 2; // Double the points if double points power-up is active
+	}
 	score += points;
 }
 
@@ -69,19 +79,6 @@ int Player::getScore() const {
 int Player::getHealth() const {
 	return health;
 }
-
-void Player::setInvisible(bool flag) {
-	isInvisible = flag;
-	invincibilityTimer = invincibilityDuration; // Reset invincibility timer
-}
-
-
-
-bool Player::getInvisible() {
-	return isInvisible;
-}
-
-
 
 void Player::jump() {
 	// Handle jump logic
@@ -102,8 +99,6 @@ void Player::duck() {
 }
 
 void Player::update(float deltaTime) {
-
-
 	if (isJumping) {
 		dy -= gravity * deltaTime;
 		y += dy * deltaTime;
@@ -130,11 +125,11 @@ void Player::update(float deltaTime) {
 		}
 	}
 
-	// Handle Invisibility
-	if (isInvisible) {
-		invincibilityTimer -= deltaTime;
-		if (invincibilityTimer <= 0.0f) {
-			isInvisible = false;
+	// Handle Double Points
+	if (isDoublePoints) {
+		doublePointsTimer -= deltaTime;
+		if (doublePointsTimer <= 0.0f) {
+			isDoublePoints = false;
 		}
 	}
 
@@ -151,7 +146,6 @@ void Player::update(float deltaTime) {
 void Player::handleKeyPress(unsigned char key, int x, int y) {
 	if (key == GLUT_KEY_UP) {
 		jump();
-
 	}
 
 	if (key == GLUT_KEY_DOWN) {
@@ -205,17 +199,37 @@ void Player::render() {
 	glVertex2f(x + width * 0.8f, y + height * 0.4f);
 	glVertex2f(x + width * 0.8f, y);
 	glEnd();
+
+	// Render power-up statuses and remaining times
+	glColor3f(1.0f, 1.0f, 0.0f); // Set color to yellow for text
+	int textY = windowHeight - 20; // Position at the top of the window
+	int textX = windowWidth / 2; // Center position of the window
+
+	if (isDoublePoints) {
+		std::stringstream doublePointsText;
+		doublePointsText.precision(1);
+		doublePointsText << std::fixed << "Double Points: " << doublePointsTimer << "s";
+		glRasterPos2f(textX - 100, textY); // Adjust position to the left of the center
+		for (char c : doublePointsText.str()) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+	}
+
+	if (isBoost) {
+		std::stringstream boostText;
+		boostText.precision(1);
+		boostText << std::fixed << "Jump Boost: " << boostTimer << "s";
+		glRasterPos2f(textX + 100, textY); // Adjust position to the right of the center
+		for (char c : boostText.str()) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+		}
+	}
 }
 
 bool Player::checkCollision(float objX, float objY, float objWidth, float objHeight) {
-
 	bool collided = (x <= objX + objWidth &&
 		x + width >= objX &&
 		y <= objY + objHeight &&
 		y + height >= objY);
-
-
-
 	return collided;
 }
-

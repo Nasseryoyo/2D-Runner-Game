@@ -17,9 +17,9 @@ public:
 	void takeDamage();       // To reduce health
 	void addScore(int points); // To add points to the score
 	bool checkCollision(float objX, float objY, float objWidth, float objHeight);
-	void setInvisible(bool flag);
 	void setBoost(bool flag);
-	bool getInvisible();
+	void setDoublePoints(bool flag);
+	bool getDoublePoints();
 
 private:
 	float x, y;              // Position of the player
@@ -30,8 +30,8 @@ private:
 	float duckTime;          // Time spent ducking
 	int health;              // Player health
 	int score;               // Player score
-	bool isInvisible;        // Invisibility flag
 	bool isBoost;            // Jump Boost flag
-	float invincibilityTimer;
 	float boostTimer;
+	bool isDoublePoints;     // Double points flag
+	float doublePointsTimer;
 };

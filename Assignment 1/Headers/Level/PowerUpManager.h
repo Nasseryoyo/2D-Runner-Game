@@ -9,7 +9,9 @@ public:
 	void render();
 	void addPowerUp(float startX, float startY);
 	std::vector<PowerUp>& getPowerUps();
+	void clearPowerUps();
 private:
 	std::vector<PowerUp> powerUps;
+
 
 };

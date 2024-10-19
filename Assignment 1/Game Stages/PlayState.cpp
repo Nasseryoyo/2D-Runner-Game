@@ -50,7 +50,6 @@ void PlayState::update(float deltaTime) {
 	for (auto& obstacle : levelGenerator.getObstacleManager().getObstacles()) {
 		if (player.checkCollision(obstacle.getX(), obstacle.getY(), obstacle.getWidth(), obstacle.getHeight())) {
 			player.takeDamage();
-			player.setInvisible(true);
 			soundManager.playSound("hit");
 			health.setLives(player.getHealth());
 			levelGenerator.resetLevel();
@@ -72,8 +71,8 @@ void PlayState::update(float deltaTime) {
 
 	for (auto& powerUp : levelGenerator.getPowerUpManager().getPowerUps()) {
 		if (player.checkCollision(powerUp.getX(), powerUp.getY(), powerUp.getWidth(), powerUp.getHeight())) {
-			if (powerUp.getPowerUpType() == 1) { // Assuming 1 is for invisibility
-				player.setInvisible(true);
+			if (powerUp.getPowerUpType() == 1) { // Assuming 1 is for Double Points
+				player.setDoublePoints(true);
 			}
 			else if (powerUp.getPowerUpType() == 2) { // Assuming 2 is for jump boost
 				player.setBoost(true);

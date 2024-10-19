@@ -21,3 +21,7 @@ void ObstacleManager::addObstacle(float startX, float startY, bool reverseDirect
 std::vector<Obstacle>& ObstacleManager::getObstacles() {
 	return obstacles;
 }
+
+void ObstacleManager::clearObstacles() {
+	obstacles.clear();
+}

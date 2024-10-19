@@ -29,6 +29,9 @@ void LevelGen::resetLevel() {
 	collectibleSpawnRate = 5.0f;
 	powerUpSpawnRate = 10.0f;
 
+	obstacleManager.clearObstacles();
+	collectibleManager.clearCollectibles();
+	powerUpManager.clearPowerUps();
 
 }
 

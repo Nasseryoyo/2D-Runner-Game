@@ -8,7 +8,8 @@ public:
 	void render();
 	void addCollectible(float startX, float startY);
 	std::vector<Coin>& getCollectibles();
+	void clearCollectibles();
+
 private:
 	std::vector<Coin> collectibles;
-
 };
